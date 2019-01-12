@@ -1,0 +1,4 @@
+plugins:
+  donorbox_enabled:
+    default: true
+    client: true
