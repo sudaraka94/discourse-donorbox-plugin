@@ -2,3 +2,11 @@ plugins:
   donorbox_enabled:
     default: true
     client: true
+
+  donorbox_badge_name:
+    default: "Donorbox Donor"
+    client: true
+
+  donorbox_badge_description:
+    default: "Granted for the contributions made on Donorbox"
+    client: true
