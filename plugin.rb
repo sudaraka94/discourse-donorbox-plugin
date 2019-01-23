@@ -6,19 +6,91 @@
 
 enabled_site_setting :donorbox_enabled
 
-module ::OpencollectivePlugin
-  BADGE_NAME ||= SiteSetting.donorbox_badge_name.freeze
+module ::DonorboxPlugin
+  BADGE_NAME ||= "Donorbox Donor".freeze
 
   def self.badges_grant!(user)
     unless badge = Badge.find_by(name: BADGE_NAME)
       badge = Badge.create!(name: BADGE_NAME,
-                           description: SiteSetting.donorbox_badge_description,
+                           description: "Granted for the contributions made on Donorbox" ,
                            badge_type_id: 1)
     end
     BadgeGranter.grant(badge, user)
   end
+
+  def self.seed_group!
+    default_group = Group.new(
+        name: "Backer",
+        visibility_level: Group.visibility_levels[:public],
+        primary_group: true,
+        title: "DonorBox Backer",
+        flair_url: "https://donorbox.org/nonprofit-blog/wp-content/uploads/2016/09/donorbox-logo-lg-square.png",
+        bio_raw: "DonorBox Backers are added to this user group",
+        full_name: "DonorBox Backer"
+    )
+
+    default_group.save!
+    group_id=default_group.id.to_s
+    ::PluginStore.set('discourse-donorbox-plugin','backer_group_id',group_id )
+    return default_group
+  end
+
+  def self.add_backers_to_group!(user)
+    group_id=::PluginStore.get('discourse-donorbox-plugin','backer_group_id')
+    if group_id==nil
+       group=seed_group!
+    else
+      group = Group.find_by id: group_id.to_i
+      if group==nil
+        group=seed_group!
+      end
+    end
+
+    group.add user
+  end
+
+  def self.sync!
+      access_key = SiteSetting.donorbox_access_key
+      access_email = SiteSetting.donorbox_access_email
+
+      if key=="" or email==""
+        puts "Fetching users from DonorBox failed!"
+        puts "Please configure settings in your admin panel"
+        return
+      end
+      url = "https://login@" + access_email + ":" + access_key + "@donorbox.org"
+      conn = Faraday.new(url: url)
+
+      response = conn.get "/api/v1/donations"
+      data = JSON.parse response.body
+
+      if data==nil
+        puts "Granting badges for DonorBox users failed!"
+        return
+      end
+      # Iterates through users
+      data.each do |user|
+        email=user['donor']['email']
+        dUser=User.find_by_email(email)
+
+        if dUser!=nil
+          if user['role']=="BACKER"
+            badges_grant!(dUser)
+            add_backers_to_group!(dUser)
+          end
+        end
+      end
+    end
 end
 
 after_initialize do
+  module ::DonorboxPlugin
+      class GrantBadgeJob < ::Jobs::Scheduled
+        every 1.minute
 
+        def execute(args)
+          DonorboxPlugin.sync!
+        end
+      end
+    end
 end
