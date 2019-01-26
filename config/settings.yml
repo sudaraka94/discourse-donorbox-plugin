@@ -3,30 +3,10 @@ plugins:
     default: true
     client: true
 
-  donorbox_badge_name:
-    default: "Donorbox Donor"
-    client: true
-
-  donorbox_badge_description:
-    default: "Granted for the contributions made on Donorbox"
-    client: true
-
-  donorbox_group_name:
-    default: "Backer"
-    client: true
-
-  donorbox_group_title:
-    default: "DonorBox Backer"
-    client: true
-
-  donorbox_group_flair_url:
+  donorbox_access_email:
     default: ""
     client: true
 
-  donorbox_group_bio_raw:
-    default: "DonorBox Backers are added to this user group"
-    client: true
-
-  donorbox_group_full_name:
-    default: "DonorBox Backer"
+  donorbox_access_key:
+    default: ""
     client: true

@@ -3,6 +3,8 @@
 # version: 0.1
 # authors: Sudaraka Jayathilaka
 # url: https://github.com/sudaraka94/discourse-donorbox-plugin
+require 'net/http'
+require 'net/https'
 
 enabled_site_setting :donorbox_enabled
 
@@ -53,31 +55,35 @@ module ::DonorboxPlugin
       access_key = SiteSetting.donorbox_access_key
       access_email = SiteSetting.donorbox_access_email
 
-      if key=="" or email==""
+      if access_key=="" or access_email==""
         puts "Fetching users from DonorBox failed!"
         puts "Please configure settings in your admin panel"
         return
       end
-      url = "https://login@" + access_email + ":" + access_key + "@donorbox.org"
-      conn = Faraday.new(url: url)
 
-      response = conn.get "/api/v1/donations"
+      uri = URI.parse("https://donorbox.org/api/v1/donors")
+
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      request = Net::HTTP::Get.new(uri.request_uri)
+      request.basic_auth(access_email, access_key)
+      response = http.request(request)
+
+
       data = JSON.parse response.body
-
       if data==nil
         puts "Granting badges for DonorBox users failed!"
         return
       end
+
       # Iterates through users
       data.each do |user|
-        email=user['donor']['email']
+        email=user['email']
         dUser=User.find_by_email(email)
 
         if dUser!=nil
-          if user['role']=="BACKER"
-            badges_grant!(dUser)
-            add_backers_to_group!(dUser)
-          end
+          badges_grant!(dUser)
+          add_backers_to_group!(dUser)
         end
       end
     end
@@ -85,7 +91,7 @@ end
 
 after_initialize do
   module ::DonorboxPlugin
-      class GrantBadgeJob < ::Jobs::Scheduled
+      class DonoboxGrantBadgeJob < ::Jobs::Scheduled
         every 1.minute
 
         def execute(args)
