@@ -1,5 +1,5 @@
 # name: discourse-donorbox-plugin
-# about: A plugin to sync discourse with Donor Box
+# about: A plugin to sync discourse with Donorbox
 # version: 0.1
 # authors: Sudaraka Jayathilaka
 # url: https://github.com/sudaraka94/discourse-donorbox-plugin
@@ -25,10 +25,10 @@ module ::DonorboxPlugin
         name: "Backer",
         visibility_level: Group.visibility_levels[:public],
         primary_group: true,
-        title: "DonorBox Backer",
+        title: "Donorbox Backer",
         flair_url: "https://donorbox.org/nonprofit-blog/wp-content/uploads/2016/09/donorbox-logo-lg-square.png",
-        bio_raw: "DonorBox Backers are added to this user group",
-        full_name: "DonorBox Backer"
+        bio_raw: "Donorbox Backers are added to this user group",
+        full_name: "Donorbox Backer"
     )
 
     default_group.save!
@@ -56,7 +56,7 @@ module ::DonorboxPlugin
       access_email = SiteSetting.donorbox_access_email
 
       if access_key=="" or access_email==""
-        puts "Fetching users from DonorBox failed!"
+        puts "Fetching users from Donorbox failed!"
         puts "Please configure settings in your admin panel"
         return
       end
@@ -72,7 +72,7 @@ module ::DonorboxPlugin
 
       data = JSON.parse response.body
       if data==nil
-        puts "Granting badges for DonorBox users failed!"
+        puts "Granting badges for Donorbox users failed!"
         return
       end
 
