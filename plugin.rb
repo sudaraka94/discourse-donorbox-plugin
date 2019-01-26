@@ -54,6 +54,7 @@ module ::DonorboxPlugin
   def self.sync!
       access_key = SiteSetting.donorbox_access_key
       access_email = SiteSetting.donorbox_access_email
+      donorbox_url = SiteSetting.donorbox_url
 
       if access_key=="" or access_email==""
         puts "Fetching users from Donorbox failed!"
@@ -61,7 +62,7 @@ module ::DonorboxPlugin
         return
       end
 
-      uri = URI.parse("https://donorbox.org/api/v1/donors")
+      uri = URI.parse("https://"+donorbox_url+"/api/v1/donors")
 
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true

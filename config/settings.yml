@@ -10,3 +10,7 @@ plugins:
   donorbox_access_key:
     default: ""
     client: true
+
+  donorbox_url:
+    default: "donorbox.org"
+    client: true

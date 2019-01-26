@@ -3,3 +3,4 @@ en:
     donorbox_enabled: "Enable Donorbox plugin"
     donorbox_access_email: "Your organization email used for Donorbox"
     donorbox_access_key: "Please refer to https://github.com/donorbox/donorbox-api for the instructions on how to generate the API KEY for Donorbox"
+    donorbox_url: "Don't change the Donorbox URL unless you want to test the integration with a demo DOnorbox instance"
