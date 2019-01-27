@@ -22,13 +22,13 @@ module ::DonorboxPlugin
 
   def self.seed_group!
     default_group = Group.new(
-        name: "Donorbox Backers",
+        name: "DonorboxBackers",
         visibility_level: Group.visibility_levels[:public],
         primary_group: true,
         title: "Donorbox Backer",
         flair_url: "https://donorbox.org/nonprofit-blog/wp-content/uploads/2016/09/donorbox-logo-lg-square.png",
         bio_raw: "Donorbox Backers are added to this user group",
-        full_name: "Donorbox Backer"
+        full_name: "Donorbox Backers"
     )
 
     default_group.save!
