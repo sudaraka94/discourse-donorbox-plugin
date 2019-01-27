@@ -22,7 +22,7 @@ module ::DonorboxPlugin
 
   def self.seed_group!
     default_group = Group.new(
-        name: "Backer",
+        name: "Donorbox Backers",
         visibility_level: Group.visibility_levels[:public],
         primary_group: true,
         title: "Donorbox Backer",
@@ -62,14 +62,13 @@ module ::DonorboxPlugin
         return
       end
 
-      uri = URI.parse("https://"+donorbox_url+"/api/v1/donors")
+      uri = URI.parse("https://" + donorbox_url + "/api/v1/donors")
 
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       request = Net::HTTP::Get.new(uri.request_uri)
       request.basic_auth(access_email, access_key)
       response = http.request(request)
-
 
       data = JSON.parse response.body
       if data==nil
